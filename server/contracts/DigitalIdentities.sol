@@ -21,7 +21,8 @@ contract DigitialIdentities {
     mapping (address => bytes32) private digitalIdentities;
     mapping (address => individual) private identity;
     mapping (address => mapping (address => bool)) private thirdPartyVerification;
-
+    mapping (address => uint256) private verifcationVote;
+    mapping (address => bool) private isVerified;
 
     constructor(){
         contractOwner = msg.sender; 
@@ -35,5 +36,51 @@ contract DigitialIdentities {
 
         digitalIdentities[userAddress] = hashedIdentity;
         identity[userAddress] = newInstance;
+    }
+
+    function removeIdentity(address userAddress) public{
+
+    }
+
+    function updateIdentity() public{
+
+    }
+
+
+    function getDigitalIdentity(address userAddress) public returns(bytes32){
+        // returns the hash of the off-chain identification the user attached to the address has stored
+        return digitalIdentities[userAddress];
+    }
+
+    function getIndividual(address userAddress) public {
+
+    }
+
+    function requestVerification() public{
+        // this function is called by the user when they want to get verified, they can do this when a verified address has verified them
+    }
+
+    function revokeVerification() public{
+        // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
+    }
+
+    function isUserVerfied() public returns(bool){
+        // returns true if the user is veried, else false
+        return true;
+    }
+
+    function deactivateIdentity() public{
+        // removes all traces of their identity from the system
+    }
+
+    function getVerifiedList() public{
+
+    }
+    function acceptThirdParty() public{
+
+    }
+
+    function rejectThirdParty() public{
+
     }
 }
