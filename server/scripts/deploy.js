@@ -8,7 +8,7 @@ async function deploy(){
 
     const contractAddress = await digitialIdentites.getAddress();
 
-    console.log("Smart contract deployed at ");
+    console.log("Smart contract deployed at address: " + contractAddress);
 }
 
 deploy().catch((error) => {

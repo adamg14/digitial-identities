@@ -39,11 +39,28 @@ contract DigitialIdentities {
     }
 
     function removeIdentity(address userAddress) public{
-
+        delete digitalIdentities[userAddress];
+        delete identity[userAddress];
+        //  dont need to delete the third-party verification of the address as the hashed identity will be deleted, leaving the third-party to access nothing
+        delete verifcationVote[userAddress];
+        delete isVerified[userAddress];
     }
 
-    function updateIdentity() public{
 
+    function revokeThirdParyVerification(address userAddress, address thirdPartyAddress) public{
+        thirdPartyVerification[userAddress][thirdPartyAddress] = false;
+    }
+    
+    function approveThirdPartyVerification(address userAddress, address thirdParyAdddress) public{
+        thirdPartyVerification[userAddress][thirdParyAdddress] = true;
+    }
+
+    function updateIdentity(address userAddress, string memory fullName, string memory emailAddress, bytes32 hashedIdentity, uint256 dateOfBirth) public{
+        individual storage updateIndividual = identity[msg.sender];
+        updateIndividual.fullName = fullName;
+        updateIndividual.emailAddress = emailAddress;
+        updateIndividual.hashedIdentity = hashedIdentity;
+        updateIndividual.dateOfBirth = dateOfBirth;
     }
 
 
@@ -52,35 +69,35 @@ contract DigitialIdentities {
         return digitalIdentities[userAddress];
     }
 
-    function getIndividual(address userAddress) public {
-
+    function getIndividual(address userAddress) public returns(individual memory){
+        return identity[userAddress];
     }
 
     function requestVerification() public{
         // this function is called by the user when they want to get verified, they can do this when a verified address has verified them
+        // but maybe when a verified address has verified them it will be done automatically
     }
 
-    function revokeVerification() public{
+    function revokeVerification(address revokedAddress) public {
         // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
+        // SHOULD CHANGE THIS FUNCTION TO A REQUIREMENT
+        require(isOwner() == true);
+        isVerified[revokedAddress] = false;
     }
 
+    function isOwner() public returns(bool){
+        if(contractOwner == msg.sender){
+            return true;
+        }else{
+            return false;
+        }
+    }
     function isUserVerfied() public returns(bool){
         // returns true if the user is veried, else false
         return true;
     }
 
-    function deactivateIdentity() public{
-        // removes all traces of their identity from the system
-    }
-
     function getVerifiedList() public{
-
-    }
-    function acceptThirdParty() public{
-
-    }
-
-    function rejectThirdParty() public{
 
     }
 }

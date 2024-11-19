@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import { Button } from '@mui/material';
 import { motion } from 'framer-motion';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 function ConnectWalletButton() {
   const [account, setAccount] = useState(null);
@@ -23,6 +24,7 @@ function ConnectWalletButton() {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
     >
+      <ConnectButton></ConnectButton>
       <Button
         variant="contained"
         color="primary"
