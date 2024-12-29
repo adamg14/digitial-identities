@@ -1,0 +1,19 @@
+require("@nomicfoundation/hardhat-toolbox");
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.27",
+  networks: {
+    'base-mainnet': {
+      url: 'http://mainnet.base.org',
+      accounts: [],
+      gasPrice: 1000000000
+    },
+
+    'base-sepolia': {
+      url: 'http://sepolia.base.org',
+      accounts: [],
+      gasPrice: 1000000000
+    }
+  }
+};
