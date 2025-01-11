@@ -6,6 +6,7 @@ contract DigitialIdentities {
 
     address private contractOwner;
     string private fullName;
+<<<<<<< HEAD
     bytes32 private hashedIdentity;
     address[] private verificationRequests;
     address[] verified;
@@ -13,6 +14,17 @@ contract DigitialIdentities {
     struct individual {
         string fullName;
         bytes32 hashedIdentity;
+=======
+    string private emailAddress;
+    bytes32 private hashedIdentity;
+    uint256 private dateOfBirth;
+
+    struct individual {
+        string fullName;
+        string emailAddress;
+        bytes32 hashedIdentity;
+        uint256 dateOfBirth;
+>>>>>>> origin/main
     }
 
 
@@ -24,6 +36,7 @@ contract DigitialIdentities {
 
     constructor(){
         contractOwner = msg.sender; 
+<<<<<<< HEAD
         isVerified[msg.sender] = true;
         verified.push(msg.sender);
     }
@@ -42,6 +55,18 @@ contract DigitialIdentities {
         require(digitalIdentities[msg.sender] == bytes32(0), "Identity already exists");
         individual memory newIdentity = individual(name, identityHash);
 
+=======
+    }
+
+    function establishIdentity(address userAddress, string memory userName, string memory userEmail, bytes32 userHash, uint256 userDOB) public{
+        // check if the identity already exists
+
+        // the person who sends the transaction is the one who's identity is being verified
+        individual memory newInstance = individual(userName, userEmail, userHash, userDOB);
+
+        digitalIdentities[userAddress] = hashedIdentity;
+        identity[userAddress] = newInstance;
+>>>>>>> origin/main
     }
 
     function removeIdentity(address userAddress) public{
@@ -52,10 +77,13 @@ contract DigitialIdentities {
         delete isVerified[userAddress];
     }
 
+<<<<<<< HEAD
     function assignVerification(address userAddress) public onlyVerified{
         require(!isVerified[userAddress], "User is already verified");
         isVerified[userAddress] == true;
     }
+=======
+>>>>>>> origin/main
 
     function revokeThirdParyVerification(address userAddress, address thirdPartyAddress) public{
         thirdPartyVerification[userAddress][thirdPartyAddress] = false;
@@ -65,6 +93,7 @@ contract DigitialIdentities {
         thirdPartyVerification[userAddress][thirdParyAdddress] = true;
     }
 
+<<<<<<< HEAD
     function updateIdentity(address updatedAdress, string memory updatedName, bytes32 updatedHash) public{
         individual storage updateIndividual = identity[msg.sender];
         updateIndividual.fullName = fullName;
@@ -73,10 +102,23 @@ contract DigitialIdentities {
 
 
     function getDigitalIdentity(address userAddress) view public returns(bytes32){
+=======
+    function updateIdentity(address userAddress, string memory fullName, string memory emailAddress, bytes32 hashedIdentity, uint256 dateOfBirth) public{
+        individual storage updateIndividual = identity[msg.sender];
+        updateIndividual.fullName = fullName;
+        updateIndividual.emailAddress = emailAddress;
+        updateIndividual.hashedIdentity = hashedIdentity;
+        updateIndividual.dateOfBirth = dateOfBirth;
+    }
+
+
+    function getDigitalIdentity(address userAddress) public returns(bytes32){
+>>>>>>> origin/main
         // returns the hash of the off-chain identification the user attached to the address has stored
         return digitalIdentities[userAddress];
     }
 
+<<<<<<< HEAD
     function getIndividual(address userAddress) public view returns(individual memory){
         return identity[userAddress];
     }
@@ -98,5 +140,37 @@ contract DigitialIdentities {
 
     function getVerifiedUsersList() public view returns(address[] memory){
         return verified;
+=======
+    function getIndividual(address userAddress) public returns(individual memory){
+        return identity[userAddress];
+    }
+
+    function requestVerification() public{
+        // this function is called by the user when they want to get verified, they can do this when a verified address has verified them
+        // but maybe when a verified address has verified them it will be done automatically
+    }
+
+    function revokeVerification(address revokedAddress) public {
+        // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
+        // SHOULD CHANGE THIS FUNCTION TO A REQUIREMENT
+        require(isOwner() == true);
+        isVerified[revokedAddress] = false;
+    }
+
+    function isOwner() public returns(bool){
+        if(contractOwner == msg.sender){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function isUserVerfied() public returns(bool){
+        // returns true if the user is veried, else false
+        return true;
+    }
+
+    function getVerifiedList() public{
+
+>>>>>>> origin/main
     }
 }
