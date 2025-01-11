@@ -1,5 +1,9 @@
 const { ethers } = require("hardhat");
+<<<<<<< HEAD
+require("dotenv").config({ })
+=======
 
+>>>>>>> origin/main
 
 async function deploy(){
     const digitialIdentites = await ethers.deployContract("DigitalIdentites");

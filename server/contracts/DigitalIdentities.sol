@@ -6,6 +6,15 @@ contract DigitialIdentities {
 
     address private contractOwner;
     string private fullName;
+<<<<<<< HEAD
+    bytes32 private hashedIdentity;
+    address[] private verificationRequests;
+    address[] verified;
+
+    struct individual {
+        string fullName;
+        bytes32 hashedIdentity;
+=======
     string private emailAddress;
     bytes32 private hashedIdentity;
     uint256 private dateOfBirth;
@@ -15,6 +24,7 @@ contract DigitialIdentities {
         string emailAddress;
         bytes32 hashedIdentity;
         uint256 dateOfBirth;
+>>>>>>> origin/main
     }
 
 
@@ -26,6 +36,26 @@ contract DigitialIdentities {
 
     constructor(){
         contractOwner = msg.sender; 
+<<<<<<< HEAD
+        isVerified[msg.sender] = true;
+        verified.push(msg.sender);
+    }
+
+    modifier onlyOwner(){
+        require(msg.sender == contractOwner, "Only the smart contract owner can perform this action");
+        _;
+    }
+
+    modifier onlyVerified(){
+        require(isVerified[msg.sender] == true, "Only verified users can perform this action");
+        _;
+    }
+
+    function establishIdentity(string memory name, bytes32 identityHash) public{
+        require(digitalIdentities[msg.sender] == bytes32(0), "Identity already exists");
+        individual memory newIdentity = individual(name, identityHash);
+
+=======
     }
 
     function establishIdentity(address userAddress, string memory userName, string memory userEmail, bytes32 userHash, uint256 userDOB) public{
@@ -36,6 +66,7 @@ contract DigitialIdentities {
 
         digitalIdentities[userAddress] = hashedIdentity;
         identity[userAddress] = newInstance;
+>>>>>>> origin/main
     }
 
     function removeIdentity(address userAddress) public{
@@ -46,6 +77,13 @@ contract DigitialIdentities {
         delete isVerified[userAddress];
     }
 
+<<<<<<< HEAD
+    function assignVerification(address userAddress) public onlyVerified{
+        require(!isVerified[userAddress], "User is already verified");
+        isVerified[userAddress] == true;
+    }
+=======
+>>>>>>> origin/main
 
     function revokeThirdParyVerification(address userAddress, address thirdPartyAddress) public{
         thirdPartyVerification[userAddress][thirdPartyAddress] = false;
@@ -55,6 +93,16 @@ contract DigitialIdentities {
         thirdPartyVerification[userAddress][thirdParyAdddress] = true;
     }
 
+<<<<<<< HEAD
+    function updateIdentity(address updatedAdress, string memory updatedName, bytes32 updatedHash) public{
+        individual storage updateIndividual = identity[msg.sender];
+        updateIndividual.fullName = fullName;
+        updateIndividual.hashedIdentity = hashedIdentity;
+    }
+
+
+    function getDigitalIdentity(address userAddress) view public returns(bytes32){
+=======
     function updateIdentity(address userAddress, string memory fullName, string memory emailAddress, bytes32 hashedIdentity, uint256 dateOfBirth) public{
         individual storage updateIndividual = identity[msg.sender];
         updateIndividual.fullName = fullName;
@@ -65,10 +113,34 @@ contract DigitialIdentities {
 
 
     function getDigitalIdentity(address userAddress) public returns(bytes32){
+>>>>>>> origin/main
         // returns the hash of the off-chain identification the user attached to the address has stored
         return digitalIdentities[userAddress];
     }
 
+<<<<<<< HEAD
+    function getIndividual(address userAddress) public view returns(individual memory){
+        return identity[userAddress];
+    }
+
+    function revokeVerification(address revokedAddress) public onlyOwner{
+        // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
+        // SHOULD CHANGE THIS FUNCTION TO A REQUIREMENT
+        isVerified[revokedAddress] = false;
+    }
+
+    function requestVerification() public{
+        verificationRequests.push(msg.sender);
+    }
+
+    function isUserVerfied() public view returns(bool){
+        // returns true if the user is veried, else false
+        return isVerified[msg.sender];
+    }
+
+    function getVerifiedUsersList() public view returns(address[] memory){
+        return verified;
+=======
     function getIndividual(address userAddress) public returns(individual memory){
         return identity[userAddress];
     }
@@ -99,5 +171,6 @@ contract DigitialIdentities {
 
     function getVerifiedList() public{
 
+>>>>>>> origin/main
     }
 }
