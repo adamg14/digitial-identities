@@ -1,8 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
-<<<<<<< HEAD
+
 require("dotenv").config();
-=======
->>>>>>> origin/main
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -15,11 +13,8 @@ module.exports = {
     },
 
     'base-sepolia': {
-<<<<<<< HEAD
       url: process.env.NETWORK_URL,
-=======
       url: 'http://sepolia.base.org',
->>>>>>> origin/main
       accounts: [],
       gasPrice: 1000000000
     }
