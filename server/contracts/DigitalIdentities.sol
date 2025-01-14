@@ -1,176 +1,104 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-
-contract DigitialIdentities {
-
+contract DigitalIdentities {
     address private contractOwner;
-    string private fullName;
-<<<<<<< HEAD
-    bytes32 private hashedIdentity;
+    uint256 private identityId = 0;
     address[] private verificationRequests;
-    address[] verified;
+    address[] public verified;
+    uint256 private verificationAmount;
 
-    struct individual {
+    struct Individual {
+        uint256 id;
         string fullName;
         bytes32 hashedIdentity;
-=======
-    string private emailAddress;
-    bytes32 private hashedIdentity;
-    uint256 private dateOfBirth;
-
-    struct individual {
-        string fullName;
-        string emailAddress;
-        bytes32 hashedIdentity;
-        uint256 dateOfBirth;
->>>>>>> origin/main
+        address wallet;
     }
 
+    mapping(address => Individual) private identity;
+    // not sure if this variable is necessary
+    mapping(address => bytes32) private digitalIdentities;
+    mapping(address => bool) private isVerified;
 
-    mapping (address => bytes32) private digitalIdentities;
-    mapping (address => individual) private identity;
-    mapping (address => mapping (address => bool)) private thirdPartyVerification;
-    mapping (address => uint256) private verifcationVote;
-    mapping (address => bool) private isVerified;
+    event identityEstablished(uint256 identityID, address walletAddress);
 
-    constructor(){
-        contractOwner = msg.sender; 
-<<<<<<< HEAD
-        isVerified[msg.sender] = true;
-        verified.push(msg.sender);
+    constructor(string memory fullName, bytes32 hashedIdentity) {
+        contractOwner = msg.sender;
+        isVerified[msg.sender] = true; 
+        Individual memory owner = Individual(identityId, fullName, hashedIdentity, msg.sender);
+        identity[msg.sender] = owner;
+        identityId += 1;
+
+        // add the owner to the identity mappting
+        // Contract owner is verified by default
     }
 
-    modifier onlyOwner(){
+    modifier onlyOwner() {
         require(msg.sender == contractOwner, "Only the smart contract owner can perform this action");
         _;
     }
 
-    modifier onlyVerified(){
-        require(isVerified[msg.sender] == true, "Only verified users can perform this action");
+    modifier onlyVerified() {
+        require(isVerified[msg.sender], "Only verified users can perform this action");
         _;
     }
 
-    function establishIdentity(string memory name, bytes32 identityHash) public{
-        require(digitalIdentities[msg.sender] == bytes32(0), "Identity already exists");
-        individual memory newIdentity = individual(name, identityHash);
-
-=======
+    function establishIdentity(
+        string memory fullName,
+        bytes32 hashedIdentity
+    ) public {
+        require(identity[msg.sender].id == 0, "Identity already exists");
+        Individual memory newIdentity = Individual(identityId, fullName, hashedIdentity, msg.sender);
+        identityId += 1;
+        identity[msg.sender] = newIdentity;
+        digitalIdentities[msg.sender] = hashedIdentity;
     }
 
-    function establishIdentity(address userAddress, string memory userName, string memory userEmail, bytes32 userHash, uint256 userDOB) public{
-        // check if the identity already exists
-
-        // the person who sends the transaction is the one who's identity is being verified
-        individual memory newInstance = individual(userName, userEmail, userHash, userDOB);
-
-        digitalIdentities[userAddress] = hashedIdentity;
-        identity[userAddress] = newInstance;
->>>>>>> origin/main
+    function updateIdentity(
+        address updatedAddress,
+        string memory updatedName,
+        bytes32 updatedHash
+    ) public {
+        Individual storage updateIndividual = identity[updatedAddress];
+        updateIndividual.fullName = updatedName;
+        updateIndividual.hashedIdentity = updatedHash;
     }
 
-    function removeIdentity(address userAddress) public{
-        delete digitalIdentities[userAddress];
-        delete identity[userAddress];
-        //  dont need to delete the third-party verification of the address as the hashed identity will be deleted, leaving the third-party to access nothing
-        delete verifcationVote[userAddress];
-        delete isVerified[userAddress];
-    }
-
-<<<<<<< HEAD
-    function assignVerification(address userAddress) public onlyVerified{
+    function assignVerification(address userAddress) public onlyVerified {
         require(!isVerified[userAddress], "User is already verified");
-        isVerified[userAddress] == true;
-    }
-=======
->>>>>>> origin/main
-
-    function revokeThirdParyVerification(address userAddress, address thirdPartyAddress) public{
-        thirdPartyVerification[userAddress][thirdPartyAddress] = false;
-    }
-    
-    function approveThirdPartyVerification(address userAddress, address thirdParyAdddress) public{
-        thirdPartyVerification[userAddress][thirdParyAdddress] = true;
-    }
-
-<<<<<<< HEAD
-    function updateIdentity(address updatedAdress, string memory updatedName, bytes32 updatedHash) public{
-        individual storage updateIndividual = identity[msg.sender];
-        updateIndividual.fullName = fullName;
-        updateIndividual.hashedIdentity = hashedIdentity;
-    }
-
-
-    function getDigitalIdentity(address userAddress) view public returns(bytes32){
-=======
-    function updateIdentity(address userAddress, string memory fullName, string memory emailAddress, bytes32 hashedIdentity, uint256 dateOfBirth) public{
-        individual storage updateIndividual = identity[msg.sender];
-        updateIndividual.fullName = fullName;
-        updateIndividual.emailAddress = emailAddress;
-        updateIndividual.hashedIdentity = hashedIdentity;
-        updateIndividual.dateOfBirth = dateOfBirth;
-    }
-
-
-    function getDigitalIdentity(address userAddress) public returns(bytes32){
->>>>>>> origin/main
-        // returns the hash of the off-chain identification the user attached to the address has stored
-        return digitalIdentities[userAddress];
-    }
-
-<<<<<<< HEAD
-    function getIndividual(address userAddress) public view returns(individual memory){
-        return identity[userAddress];
-    }
-
-    function revokeVerification(address revokedAddress) public onlyOwner{
-        // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
-        // SHOULD CHANGE THIS FUNCTION TO A REQUIREMENT
-        isVerified[revokedAddress] = false;
+        isVerified[userAddress] = true;
     }
 
     function requestVerification() public{
+        require(digitalIdentities[msg.sender] == 0, "You do not have a registered account");
+        require(isVerified[msg.sender] == true, "You are already verified");
         verificationRequests.push(msg.sender);
     }
 
-    function isUserVerfied() public view returns(bool){
-        // returns true if the user is veried, else false
-        return isVerified[msg.sender];
-    }
-
-    function getVerifiedUsersList() public view returns(address[] memory){
-        return verified;
-=======
-    function getIndividual(address userAddress) public returns(individual memory){
-        return identity[userAddress];
-    }
-
-    function requestVerification() public{
-        // this function is called by the user when they want to get verified, they can do this when a verified address has verified them
-        // but maybe when a verified address has verified them it will be done automatically
-    }
-
-    function revokeVerification(address revokedAddress) public {
-        // the owner of the contract is able to revoke the verification of an identity if they identify malicious actions
-        // SHOULD CHANGE THIS FUNCTION TO A REQUIREMENT
-        require(isOwner() == true);
+    function revokeVerification(address revokedAddress) public onlyOwner {
         isVerified[revokedAddress] = false;
     }
 
-    function isOwner() public returns(bool){
-        if(contractOwner == msg.sender){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    function isUserVerfied() public returns(bool){
-        // returns true if the user is veried, else false
-        return true;
+    function getDigitalIdentity(address userAddress) public view returns (bytes32) {
+        return digitalIdentities[userAddress];
     }
 
-    function getVerifiedList() public{
+    function isUserVerified(address userAddress) public view returns (bool) {
+        return isVerified[userAddress];
+    }
 
->>>>>>> origin/main
+    // a function to allow a user to pay for verification
+    function verificationPayment() public payable{
+        require(msg.value >= verificationAmount, "Insufficient funds");
+        isVerified[msg.sender] = true;
+    }
+
+    function updateVerificationAmount(uint256 newAmount) public onlyOwner{
+        verificationAmount = newAmount;
+    }
+
+    // a function that allows the contract owner to withdraw funds
+    function withdrawContractFunds() public onlyOwner{
+
     }
 }
