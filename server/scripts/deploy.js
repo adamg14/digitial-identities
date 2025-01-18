@@ -1,20 +1,29 @@
+require("dotenv").config({ path: "../.env"});
 const { ethers } = require("hardhat");
-<<<<<<< HEAD
-require("dotenv").config({ })
-=======
 
->>>>>>> origin/main
+
 
 async function deploy(){
-    const digitialIdentites = await ethers.deployContract("DigitalIdentites");
+    const [deployer] = await ethers.getSigners();
 
-    await digitialIdentites.waitForDeployment();
+    console.log("Deploying contracts with account: ", deployer.address);
 
-    const contractAddress = await digitialIdentites.getAddress();
+    const fullName = "Adam Worede"
+    // just an example of an identity to show how the application works
+    const hashedIdentity = ethers.encodeBytes32String("Passport Number: 123");
 
-    console.log("Smart contract deployed at address: " + contractAddress);
+    const DigitalIdentities = await ethers.getContractFactory("DigitalIdentities")
+    const smartContract = await DigitalIdentities.deploy(fullName, hashedIdentity);
+
+    await smartContract.waitForDeployment();
+
+    const smartContractAddress = await smartContract.getAddress();
+    console.log("Digital Identities deployed to smart contract address: ", smartContractAddress);
 }
 
-deploy().catch((error) => {
-    console.log(error);
+deploy().then(() => {
+    process.exit(0);
+}).catch((error) => {
+    console.error(error);
+    process.exit(1);
 });

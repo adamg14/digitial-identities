@@ -1,21 +1,16 @@
+require("dotenv").config();
 require("@nomicfoundation/hardhat-toolbox");
 
-require("dotenv").config();
+
+console.log("NETWORK_URL: ", process.env.NETWORK_URL);
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.27",
   networks: {
-    'base-mainnet': {
-      url: 'http://mainnet.base.org',
-      accounts: [],
-      gasPrice: 1000000000
-    },
-
-    'base-sepolia': {
+    'sepolia': {
       url: process.env.NETWORK_URL,
-      url: 'http://sepolia.base.org',
-      accounts: [],
+      accounts: [process.env.PRIVATE_KEY],
       gasPrice: 1000000000
     }
   }
