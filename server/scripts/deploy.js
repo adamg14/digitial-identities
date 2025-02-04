@@ -1,12 +1,16 @@
 const { ethers } = require("hardhat");
-<<<<<<< HEAD
-require("dotenv").config({ })
-=======
-
->>>>>>> origin/main
+require("dotenv").config({ });
 
 async function deploy(){
-    const digitialIdentites = await ethers.deployContract("DigitalIdentites");
+    // constructor arguments
+    const fullName = "Adam Worede";
+    const hashedIdentity = ethers.keccak256(
+        ethers.toUtf8Bytes("123456789")
+    );
+
+    const digitialIdentites = await ethers.deployContract("DigitalIdentities",
+        [fullName, hashedIdentity]
+    );
 
     await digitialIdentites.waitForDeployment();
 
