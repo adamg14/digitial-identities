@@ -16,7 +16,7 @@ contract DigitalIdentities {
     mapping(address => Individual) private identity;
     // not sure if this variable is necessary
     mapping(address => bytes32) private digitalIdentities;
-    mapping(address => bool) private isVerified;
+    mapping(address => bool) public isVerified;
     mapping(address => mapping(address => bool )) private viewPermissions;
     mapping(address => address[]) private viewRequests;
     mapping(address => address[]) private grantedPermissions;
@@ -35,7 +35,7 @@ contract DigitalIdentities {
 
     constructor(string memory fullName, bytes32 hashedIdentity) {
         contractOwner = msg.sender;
-        isVerified[msg.sender] = true; 
+        isVerified[msg.sender] = true;
         Individual memory owner = Individual( fullName, hashedIdentity, msg.sender);
         identity[msg.sender] = owner;
 
@@ -66,7 +66,6 @@ contract DigitalIdentities {
     }
 
     function updateIdentity(
-        uint256 idenityId,
         string memory updatedName,
         bytes32 updatedHash
     ) public {
