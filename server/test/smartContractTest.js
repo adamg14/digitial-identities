@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { web3 } = require("web3");
 
 describe("DigitalIdentities", function () {
     let DigitalIdentities, smartContract;
@@ -94,5 +95,14 @@ describe("DigitalIdentities", function () {
       // the transaction status should be failed
       expect(newContractConnection.revokeVerification(owner.address)).to.be.revertedWith("You do not have a registered account");
 
-    })
+    });
+
+    it("updateVerificationAmount - This function should allow the owner to set a new verification amount", async function(){
+      const newVerificationAmount = ethers.parseEther('0.5');
+      const updateVerificationAmount = await smartContract.updateVerificationAmount(newVerificationAmount);
+      console.log(updateVerificationAmount.logs)
+      expect(updateVerificationAmount.logs).to.not.equals(null);
+    });
+
+    
 });
