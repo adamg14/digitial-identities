@@ -88,5 +88,11 @@ describe("DigitalIdentities", function () {
     //   expect(await smartContract.revokeVerification(owner.address).to.be.reveredWith("You are already verified"));
     // });
 
-    it("Testing the requestVerification function - a non-assigned wallet addres should not be able to request a verification");
+    it("revokeVerification - A wallet address that is not the owner of the contract should not be able to call this function.", async function(){
+      const newContractConnection = smartContract.connect(address1);
+
+      // the transaction status should be failed
+      expect(newContractConnection.revokeVerification(owner.address)).to.be.revertedWith("You do not have a registered account");
+
+    })
 });
