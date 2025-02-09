@@ -104,5 +104,83 @@ describe("DigitalIdentities", function () {
       expect(updateVerificationAmount.logs).to.not.equals(null);
     });
 
-    
+    it("getBalance - this function should return an integer that corresponds with the amount in the smart contract", async function(){
+      const smartContractBalance = await smartContract.getBalance();
+      expect(smartContractBalance).to.be.a("number");
+    });
+
+    it("withdrawContractFunds - allow only the owner of the smart contract to withdraw funds from the transaction", async function(){
+      // check the funds of the owner wallet
+
+      // this transaction should withdraw funds from the smart contract
+      const withdrawFundsAmount = ethers.parseEther('0.1');
+      const withdrawFundsCall = await smartContract.withdrawContractFunds();
+      
+      // the transaction should be valid
+      const transactionReceipt = await withdrawFundsCall.wait();
+
+      expect(transactionReceipt.status).to.equal(1);
+      // check that the identity has updated using the
+      // the owners wallet should increase by the withdrawFundsAmount
+      
+    });
+
+    it("grantViewPermission function - a contract address should be able to to grant access to another contract address", async function(){
+      // test if this function works with a string address
+      const newContractConnection = smartContract.connect(address1);
+      const grantPermission = await newContractConnection.grantViewPermission(owner.address);
+      // expect an the event to be emitting showing that the view permission has been added
+       
+      expect(grantPermission.logs).to.not.equals(null);
+      // add additional check to see if the address has been added to the list of viewer permissions
+    });
+
+    it("grantViewPermission function - The transaction is reverted if the wallet granted the access tries to grant access to itself", async function(){
+      const newContractConnection = smartContract.connect(address1);
+      const invalidGrantPermissions = await newContractConnection.grantViewPermission(address1.address);
+
+      expect(invalidGrantPermissions).to.be.revertedWith("You cannot revoke permission to yourself");
+    });
+
+    it("grantViewPermission - the transaction is reverted if an invalid address is passed into the function", async function(){
+      const invalidGrantPermission = smartContract.grantViewPermission("0x12312423");
+
+      expect(invalidGrantPermission.to.be.revertedWith("Identity not found"));
+    });
+
+    it("revokeViewPermission function - a contract address should be able to revoke acess to ", async function(){
+      const newContractConnection = smartContract.connect(address1);
+      const revokePermission = await newContractConnection.revokeViewPermission(owner.address);
+
+      // expect the transaction to emit an event - saying that the permission has been revoked
+      expect(revokePermission.logs).to.not.equals(null);
+    });
+
+    it("revokeViewPermission - if a contract address tries to revoke its own address from its view permissions the transaction will be reverted", async function(){
+      const revokeOwnPermission = await smartContract.revokeViewPermission(owner.address);
+
+      expect(revokeOwnPermission.to.be.revertedWith("You cannot revoke permission to yourself"));
+    });
+
+    it("viewIdentityPermission - specifically see the permission rights between two addresses, this should return true or false depending on the view permissions", async function(){
+      const viewPermissions = smartContract.viewIdentityPermission(owner.address, address1.address);
+      expect(viewPermissions).to.be.a("bool");
+    });
+
+    it("viewIdentityHash - allows the owner wallet and the wallets which has permissions to view the hash of the owners identity", async function(){
+      const viewIdentityHash = smartContract.viewIdentityHash(address1.address);
+      expect(viewIdentityHash).to.be.a("array");
+    });
+
+    it("viewIdentityHash - if this function is called by a address that does not have viewing permissions this transaction is reverted", async function(){
+      const newContractConnection = smartContract.connect(address1);
+      const invalidView = newContractConnection.viewIdentityHash(owner.address);
+      expect(invalidView).to.be.revertedWith("Permission not granted");
+    });
+
+    it("viewMyPermissions - this function allows a wallet address to view which addresses have access to their hashed identity", async function(){
+      const newContractConnection = smartContract.connect(address1);
+      const viewPermissions = newContractConnection.viewMyPermissions();
+      expect(viewPermissions).to.be.not.null;
+    });
 });

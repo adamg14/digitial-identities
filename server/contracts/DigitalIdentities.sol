@@ -141,7 +141,7 @@ contract DigitalIdentities {
 
     function revokeViewPermission(address viewer) public{
         require(identity[msg.sender].wallet != address(0), "Identity not found");
-        require(viewer != msg.sender, "You cannot grant permission to yourself");
+        require(viewer != msg.sender, "You cannot revoke permission to yourself");
         
         viewPermissions[msg.sender][viewer] = false;
 
