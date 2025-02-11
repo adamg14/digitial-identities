@@ -16,21 +16,27 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState<boolean>(false)
 
   useEffect(() => {
-    const walletConnected = Cookies.get("walletConnected") === "true"
-    setIsConnected(walletConnected)
+    const storedWalletAddress = Cookies.get("walletAddress")
+    if (storedWalletAddress) {
+      setWalletAddress(storedWalletAddress)
+      setIsConnected(true)
+    }
   }, [])
 
-  useEffect(() => {
-    setIsConnected(!!walletAddress)
-    if (walletAddress) {
-      Cookies.set("walletConnected", "true", { expires: 1 })
+  const setWalletAddressAndCookie = (address: string | null) => {
+    setWalletAddress(address)
+    setIsConnected(!!address)
+    if (address) {
+      Cookies.set("walletAddress", address, { expires: 1 }) // Set cookie for 1 day
     } else {
-      Cookies.remove("walletConnected")
+      Cookies.remove("walletAddress")
     }
-  }, [walletAddress])
+  }
 
   return (
-    <WalletContext.Provider value={{ walletAddress, setWalletAddress, isConnected }}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={{ walletAddress, setWalletAddress: setWalletAddressAndCookie, isConnected }}>
+      {children}
+    </WalletContext.Provider>
   )
 }
 

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { Wallet } from "lucide-react"
 import { useWallet } from "@/contexts/WalletContext"
-import Cookies from "js-cookie"
 
 declare global {
   interface Window {
@@ -28,7 +27,6 @@ export function ConnectWallet() {
         const accounts = await window.ethereum.request({ method: "eth_accounts" })
         if (accounts.length > 0) {
           setWalletAddress(accounts[0])
-          Cookies.set("walletConnected", "true", { expires: 1 }) // Set cookie for 1 day
         }
       } catch (error) {
         console.error("An error occurred while checking the wallet connection:", error)
@@ -43,7 +41,6 @@ export function ConnectWallet() {
         await window.ethereum.request({ method: "eth_requestAccounts" })
         const accounts = await window.ethereum.request({ method: "eth_accounts" })
         setWalletAddress(accounts[0])
-        Cookies.set("walletConnected", "true", { expires: 1 }) // Set cookie for 1 day
         toast({
           title: "Wallet Connected",
           description: `Connected to ${accounts[0]}`,
@@ -69,7 +66,6 @@ export function ConnectWallet() {
 
   function disconnectWallet() {
     setWalletAddress(null)
-    Cookies.remove("walletConnected")
     toast({
       title: "Wallet Disconnected",
       description: "Your wallet has been disconnected.",

@@ -8,11 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2, Check, X } from "lucide-react"
-
-interface WalletPermission {
-  address: string
-  status: "authorized" | "pending" | "viewable"
-}
+import type React from "react" // Added import for React
 
 export default function Dashboard() {
   const [authorizedWallets, setAuthorizedWallets] = useState<string[]>([])

@@ -1,4 +1,4 @@
-// File: /Users/adam/Documents/encode-2024/coinbase-projects/digitial-identities/client/app/register/page.tsx
+// File: /Users/adamworede/Documents/projects/digitial-identities/client/app/register/page.tsx
 import * as entry from '../../../../app/register/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
