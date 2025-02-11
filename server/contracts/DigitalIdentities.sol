@@ -187,4 +187,11 @@ contract DigitalIdentities {
 
         return viewRequests[msg.sender];
     }
+
+    function getUserDetails() public view returns (string memory, bytes32, address) {
+    require(identity[msg.sender].wallet != address(0), "User identity does not exist");
+
+    Individual memory user = identity[msg.sender];
+    return (user.fullName, user.hashedIdentity, user.wallet);
+}
 }
