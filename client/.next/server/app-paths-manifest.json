@@ -1,10 +1,1 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/authorize/[userId]/route": "app/api/authorize/[userId]/route.js",
-  "/api/users/route": "app/api/users/route.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/api/register/route": "app/api/register/route.js",
-  "/authorized-users/page": "app/authorized-users/page.js",
-  "/register/page": "app/register/page.js",
-  "/page": "app/page.js"
-}
+{}
