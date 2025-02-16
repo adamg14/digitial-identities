@@ -30,10 +30,10 @@ export function Navbar() {
                 Authorized Users
               </Link>
               <Link
-                href="/dashboard"
+                href="/my-identity"
                 className="text-muted-foreground hover:bg-primary/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Dashboard
+                My Identity
               </Link>
             </div>
           </div>
