@@ -1,30 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import React, { useState } from "react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { useWallet } from "@/context/walletContext";
 
 export default function Register() {
-  const [name, setName] = useState("")
-  const [documentId, setDocumentId] = useState("")
-  const [image, setImage] = useState<File | null>(null)
-  const [walletAddress, setWalletAddress] = useState("")
+  const [name, setName] = useState("");
+  const [documentId, setDocumentId] = useState("");
+  const { walletAddress } = useWallet();
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically send this data to your backend or smart contract
-    console.log({ name, documentId, image, walletAddress })
-  }
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0])
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!walletAddress) {
+      setError("Please connect your wallet.");
+      return;
     }
-  }
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+    try {
+      // Call the backend GET endpoint for registration, passing data as query parameters.
+      const response = await axios.get("http://localhost:8000/registerIdentity", {
+        params: {
+          fullName: name,
+          documentId: documentId,
+          walletAddress: walletAddress,
+        },
+      });
+      setMessage(response.data.message);
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      setError(err.response?.data?.error || "Registration failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -63,27 +80,27 @@ export default function Register() {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="image" className="text-secondary-foreground">
-                  Profile Picture (Optional)
-                </Label>
-                <Input id="image" type="file" onChange={handleImageChange} className="bg-input text-white" />
-              </div>
-              <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="walletAddress" className="text-secondary-foreground">
                   Connected Wallet Address
                 </Label>
-                <Input id="walletAddress" value={walletAddress} readOnly className="bg-input text-white" />
+                <Input
+                  id="walletAddress"
+                  value={walletAddress}
+                  readOnly
+                  className="bg-input text-white"
+                />
               </div>
             </div>
+            <CardFooter>
+              <Button type="submit" disabled={loading} className="bg-accent hover:bg-accent/90 text-white">
+                {loading ? "Registering..." : "Register"}
+              </Button>
+            </CardFooter>
           </form>
+          {message && <p className="text-green-500 mt-4">{message}</p>}
+          {error && <p className="text-red-500 mt-4">{error}</p>}
         </CardContent>
-        <CardFooter>
-          <Button onClick={handleSubmit} className="bg-accent hover:bg-accent/90 text-white">
-            Register
-          </Button>
-        </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
-
