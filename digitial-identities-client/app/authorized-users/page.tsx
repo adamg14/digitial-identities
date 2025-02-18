@@ -1,26 +1,63 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { CheckCircle, Clock } from "lucide-react"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { CheckCircle, Clock } from "lucide-react";
 
-type User = {
-  id: string
-  name: string
-  status: "Authorized" | "Pending"
-}
+type UsersData = {
+  verified: string[];
+  pending: string[];
+};
 
-export default function AuthorizedUsers() {
-  const [users, setUsers] = useState<User[]>([
-    { id: "1", name: "Alice Johnson", status: "Authorized" },
-    { id: "2", name: "Bob Smith", status: "Pending" },
-    { id: "3", name: "Charlie Brown", status: "Pending" },
-  ])
+export default function authorisedUsers() {
+  const [data, setData] = useState<UsersData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAuthorize = (id: string) => {
-    setUsers(users.map((user) => (user.id === id ? { ...user, status: "Authorized" } : user)))
-  }
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:8000/getAuthorisedUsers");
+      setData(res.data);
+      setError(null);
+    } catch (err: any) {
+      console.error("Error fetching users:", err);
+      setError(err.response?.data?.error || "Error fetching data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (!data) return <p>No data available.</p>;
+
+  // Combine data into one list for display.
+  const combinedUsers = [
+    ...data.verified.map((addr) => ({
+      id: addr,
+      name: addr,
+      status: "Authorized" as const,
+    })),
+    ...data.pending.map((addr) => ({
+      id: addr,
+      name: addr,
+      status: "Pending" as const,
+    })),
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -28,13 +65,12 @@ export default function AuthorizedUsers() {
       <Table>
         <TableHeader>
           <TableRow className="border-b border-primary/20">
-            <TableHead className="text-secondary-foreground">Name</TableHead>
+            <TableHead className="text-secondary-foreground">Wallet Address</TableHead>
             <TableHead className="text-secondary-foreground">Status</TableHead>
-            <TableHead className="text-secondary-foreground">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {combinedUsers.map((user) => (
             <TableRow key={user.id} className="border-b border-primary/20">
               <TableCell className="text-muted-foreground">{user.name}</TableCell>
               <TableCell className="text-muted-foreground">
@@ -50,21 +86,10 @@ export default function AuthorizedUsers() {
                   </span>
                 )}
               </TableCell>
-              <TableCell>
-                {user.status === "Pending" && (
-                  <Button
-                    onClick={() => handleAuthorize(user.id)}
-                    className="bg-primary hover:bg-primary/90 text-white"
-                  >
-                    Authorize
-                  </Button>
-                )}
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
-
