@@ -85,7 +85,7 @@ export default function Register() {
                 </Label>
                 <Input
                   id="walletAddress"
-                  value={walletAddress}
+                  value={walletAddress || ""}
                   readOnly
                   className="bg-input text-white"
                 />
